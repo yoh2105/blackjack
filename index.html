@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            .card {
+                border: thin solid black;
+                border-radius: 16px;
+                height: 150px;
+                width: 90px;
+                margin: 16px;
+                display: grid;
+                align-items: center; /* centers vertically (up and down) */
+                justify-items: center; /* centers horizontally (left and right) */
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="game-area">
+            <div class="character">
+                <div class="title">Dealer</div>
+                <div class="card-area">
+                    <div id="dealer-0" class="card"></div>
+                    <div id="dealer-1" class="card"></div>
+                </div>
+            </div>
+            
+            <div class="character">
+                <div class="title">Player</div>
+                <div class="card-area">
+                    <div id="player-0" class="card"></div>
+                    <div id="player-1" class="card"></div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            var deck 
+            var dealerCards
+            var playerCards
+
+            function buildDeck() {
+                var newDeck = []
+                var suits = ['hearts','spades','diamonds','clubs']
+                var values = [1,2,3,4,5,6,7,8,9,10,11,12,13]
+
+
+                suits.forEach((suit) => {
+                    values.forEach((value => {
+                        var card = {
+                            suit: suit,
+                            value: value,
+                        }
+                        newDeck.push(card)
+                    }))
+                })
+
+                return newDeck
+            }
+
+            function shuffle(deck) {
+
+                function sortFunc(card1,card2) {
+                    var result
+
+                    if (Math.random() > .5) {
+                        result = 1
+                    } else {
+                        result = -1
+                    }
+                    return result
+                }
+                deck.sort(sortFunc)
+                return deck
+            }
+
+            function get2Cards() {
+                var card1 = deck.shift()
+                var card2 = deck.shift()
+
+                var cards = [card1,card2]
+
+                return cards
+            }
+
+            function displayCards() {
+                var dealerCard0 = dealerCards[0]
+                document.getElementById("dealer-0").innerHTML = dealerCard0.value + " of " + dealerCard0.suit
+
+                var dealerCard1 = dealerCards[1]
+                document.getElementById("dealer-1").innerHTML = dealerCard1.value + " of " + dealerCard1.suit
+
+                var playerCard0 = playerCards[0]
+                document.getElementById("player-0").innerHTML = playerCard0.value + " of " + playerCard0.suit
+
+                var playerCard1 = playerCards[1]
+                document.getElementById("player-1").innerHTML = playerCard1.value + " of " + playerCard1.suit
+            }
+
+            function declareWinner() {
+                dealerTotal = 0
+                playerTotal = 0
+
+                dealerCards.forEach((card) => {
+                    dealerTotal = dealerTotal + card.value
+                })
+
+                playerCards.forEach((card) => {
+                    playerTotal = playerTotal + card.value
+                })
+
+                var message
+                if (playerTotal > dealerTotal) {
+                    message = "Cool! Player beats dealer, " + playerTotal + " to " + dealerTotal + "."
+                } else {
+                    message = "Bummer. Dealer won, " + dealerTotal + " to " + playerTotal + "."
+                }
+                alert(message)
+                var answer = confirm("Would you like to play again? Press OK to restart the game.")
+                if (answer) {
+                    startGame()
+                }
+            }
+
+            function startGame() {
+                var newDeck = buildDeck()
+                var shuffledNewDeck = shuffle(newDeck)
+                deck = shuffledNewDeck
+
+                dealerCards = get2Cards()
+                playerCards = get2Cards()
+                displayCards()
+                setTimeout(declareWinner, 2000)
+            }
+
+            startGame()
+        </script>
+    </body>
+</html>
